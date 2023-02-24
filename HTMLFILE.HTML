@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Tic Tac Toe Game</title>
+    <style>
+      /* CSS STYLE*/
+      body {
+        font-family: Arial, sans-serif;
+        border: 55px solid rgba(56, 17, 82, 0.9);
+        
+        background-color: #14f608;
+      }
+      h1 {
+        text-align: center;
+        margin-top: 3px;
+      }
+      h2{
+        border: solid black;
+        border-left-width: 440px;
+        border-left-color: hsla(157, 88%, 50%, 0.536);
+        border-right-width: 440px;
+        border-right-color: hsla(157, 88%, 50%, 0.536);
+        text-align: center;
+        margin-top: 25px;
+      }
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, 2fr);
+        grid-gap: 4px;
+        margin:auto;
+        max-width: 400px;
+        padding: 0px;
+      }
+      .cell {
+        padding: 1px;
+        margin: 36px;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        border: 2px solid:white(129, 46, 46);
+        font-size: 4rem;
+        text-align: :center;
+        vertical-align: :middle;
+        line-height: 0px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items:center;
+      }
+      .cell:hover {
+        background-color: #989b8d;
+      }
+      .x {
+        color: white;
+        
+      }
+      .o {
+        color: white;
+        
+      }
+      .winner {
+        background-color: red;
+      }
+      .reset {
+        display: block;
+        margin: 120px auto;
+        padding: 10px;
+        background-color: #ccc;
+        border: solid black;
+        font-size: 1.5rem;
+        font-weight: bold;
+        cursor: pointer;
+        
+      }
+      .reset:hover{
+        background-color:orange;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <h1>Tic Tac Toe Game</h1>
+    <h2 class="turn">Current Turn: X</h2>
+    <div class="board">
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+    </div>
+    <!--To create the reset Button-->
+    <button class="reset">Reset Game</button>
+    
+    <!Javascript logic for the game>
+    
+    <script>
+    //Wait for the page to finish loading
+    document.addEventListener('DOMContentLoaded', () => {
+    // Define the players and the current turn
+    const X_CLASS = 'x';
+    const O_CLASS = 'o';
+    let currentPlayer = X_CLASS;
+
+    // Get all the cells and add a click event listener to each one
+    const cells = document.querySelectorAll('[data-cell]');
+    cells.forEach(cell => {
+    cell.addEventListener('click', handleClick, { once: true });
+    });
+
+    // For Handling  the click event on a cell
+    function handleClick(e) {
+    const cell = e.target;
+    const currentClass = currentPlayer === X_CLASS ? X_CLASS : O_CLASS;
+    placeMark(cell, currentClass);
+    if (checkWin(currentClass)) {
+        endGame(false);
+    } else if (isDraw()) {
+        endGame(true);
+    } else {
+        swapTurns();
+    }
+    }
+
+    // To Place a mark on the board and update the current player
+    function placeMark(cell, currentClass) {
+    cell.classList.add(currentClass);
+    cell.textContent = currentClass.toUpperCase();// adds "x" or "o" when click on cell. 
+    }
+
+    // For Swaping the current player
+    function swapTurns() {
+    currentPlayer = currentPlayer === X_CLASS ? O_CLASS : X_CLASS;
+    const turn = document.querySelector('.turn');
+    turn.textContent = `Current Turn: ${currentPlayer.toUpperCase()}`;
+    }
+
+    // To Check if the current player has won or not.
+    function checkWin(currentClass) {
+    return WINNING_COMBINATIONS.some(combination => {
+        return combination.every(index => {
+        return cells[index].classList.contains(currentClass);
+        });
+    });
+    }
+
+    // Check if the game is a draw
+    function isDraw() {
+    return [...cells].every(cell => {
+        return cell.classList.contains(X_CLASS) || cell.classList.contains(O_CLASS);
+    });
+    }
+
+    // To End the game and show the result
+    function endGame(draw) {
+    if (draw) {
+    alert('Draw!');
+    } else {
+    alert(`Hurrah!!   ${currentPlayer.toUpperCase()} WINS!`);
+    WINNING_COMBINATIONS.forEach(combination => {
+      if (combination.every(index => cells[index].classList.contains(currentPlayer))) {
+        combination.forEach(index => cells[index].classList.add('winner'));
+      }
+    });
+    }
+    cells.forEach(cell => {
+    cell.removeEventListener('click', handleClick);
+    });
+    }
+    //Reset function to Reset the Game.
+    //Defining of the reset button and adding a click event listener to it
+    const resetButton = document.querySelector('.reset');
+    resetButton.addEventListener('click',resetGame);
+    function resetGame(){
+        cells.forEach(cell =>{
+            cell.classList.remove(X_CLASS,O_CLASS,'winner');
+            cell.textContent = '';
+            cell.addEventListener('click',handleClick,{once:true});
+        });
+        currentPlayer = X_CLASS;
+    }
+    // To change the turn display "x" or "o"
+    const turn = document.querySelector('.turn');
+    turn.textContent = `Current Turn: ${currentPlayer.toUpperCase()}`;
+
+    
+    // Define the winning combinations
+    const WINNING_COMBINATIONS = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+    ];
+
+});
+    </script>
+  </body>
+</html>
